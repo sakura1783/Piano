@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8221c199a23f34d86b2e2aa7182209f5, type: 3}
+  m_Name: SongDataSO
+  m_EditorClassIdentifier: 
+  songDataList:
+  - tag: 1
+    name: Waltz in A minor
+    video: {fileID: 32900000, guid: 98f7192c7e6c847a89e438e756dbb58b, type: 3}
+  - tag: 1
+    name: "\u8352\u91CE\u306E\u30D0\u30E9"
+    video: {fileID: 32900000, guid: 10738ce7bd64e4ef9a79e1bb6cdf40d8, type: 3}
+  - tag: 1
+    name: ??
+    video: {fileID: 32900000, guid: db4b1d02ac6584b98a959f9f4ee69311, type: 3}
+  - tag: 2
+    name: "\u4EBA\u751F\u306E\u30E1\u30EA\u30FC\u30B4\u30FC\u30E9\u30F3\u30C9"
+    video: {fileID: 32900000, guid: a71e58bb8bd9f43748a9b7ea257b6a9d, type: 3}
+  - tag: 2
+    name: "\u6D77\u306E\u898B\u3048\u308B\u8857"
+    video: {fileID: 32900000, guid: 016d3b1ffb01a4315b15430b30e5d9f4, type: 3}
+  - tag: 3
+    name: Conturbatio
+    video: {fileID: 32900000, guid: f80042a81072b4013b76d775fe077fde, type: 3}
+  - tag: 3
+    name: Sis puella Magica!
+    video: {fileID: 32900000, guid: 13541b2271f0d4c2aba8c4c76afe894b, type: 3}
+  - tag: 3
+    name: Symposium Magarum
+    video: {fileID: 32900000, guid: 390667f88f99b4f23917029c6d1210cb, type: 3}
+  - tag: 3
+    name: Surgam Identidem
+    video: {fileID: 32900000, guid: ffc2935177e374f22b3cee36234ed977, type: 3}
+  - tag: 4
+    name: Anemone (OP)
+    video: {fileID: 32900000, guid: 17302925866f14b85a0cc883a8e849ea, type: 3}
+  - tag: 4
+    name: "Flag (\u30D5\u30ED\u30FC\u30EC\u30F3\u30B9)"
+    video: {fileID: 32900000, guid: 2d87dc6af9f2d4e8e8148d34103bf44b, type: 3}
+  - tag: 4
+    name: "Blue Rose (\u30B3\u30EB\u30C7\u30A3)"
+    video: {fileID: 32900000, guid: 42179c9429c574d2f8abbdd3fa98f73a, type: 3}
+  - tag: 5
+    name: City Ruins
+    video: {fileID: 32900000, guid: 86e5c54eea84f4d1789a89d63701ee00, type: 3}
+  - tag: 5
+    name: Amusement Park
+    video: {fileID: 32900000, guid: 21e7ce79b40734d3ca4ed43df4d7388a, type: 3}
+  - tag: 6
+    name: "\u82F1\u5091\u30EA\u30FC\u30D0\u30EB\u306E\u30C6\u30FC\u30DE"
+    video: {fileID: 32900000, guid: 02acd75209f3e48b2bf6c086e333e811, type: 3}
+  - tag: 6
+    name: "\u82F1\u5091\u30DF\u30D5\u30A1\u30FC\u306E\u30C6\u30FC\u30DE"
+    video: {fileID: 32900000, guid: aa81e977ddc3044d69974363cb489d38, type: 3}
+  - tag: 6
+    name: "\u30AB\u30C3\u30B7\u30FC\u30EF\u306E\u30C6\u30FC\u30DE"
+    video: {fileID: 32900000, guid: 4b0725f8c8d104916832699cfcae0673, type: 3}
+  - tag: 0
+    name: "\u30A2\u30A4\u30C9\u30EB (YOASOBI)"
+    video: {fileID: 32900000, guid: 9ebcadb9f2f6a486f934e88db0eee899, type: 3}
+  - tag: 0
+    name: "\u30AA\u30FC\u30E9\u30EA\u30FC"
+    video: {fileID: 32900000, guid: 640c7220c25d84a3689b146a6abad1ca, type: 3}
+  - tag: 0
+    name: "\u65C5\u7ACB\u3061\u306E\u65E5\u306B"
+    video: {fileID: 32900000, guid: 1b6187e12f78c4809b21fe71442208f0, type: 3}
+  - tag: 0
+    name: "\u8868\u88CF\u4E00\u4F53 (Hunter\xD7Hunter)"
+    video: {fileID: 32900000, guid: 35f0080b4c30a4f1f9b8a63a1b219ec1, type: 3}
+  - tag: 0
+    name: "\u30DF\u30E9\u30AF\u30EB\u30CB\u30AD (\u30E1\u30C9\u30EC\u30FC)"
+    video: {fileID: 32900000, guid: a7fdc5c5f57f5433ea04b8b36f8cf1dd, type: 3}
+  - tag: 0
+    name: I Need You (BTS)
+    video: {fileID: 32900000, guid: b198adf51e7f14038af80a87f12aa26f, type: 3}
+  - tag: 0
+    name: Leave (StrayKids)
+    video: {fileID: 32900000, guid: 52c0f4944b101432d958f0dea85067f5, type: 3}
