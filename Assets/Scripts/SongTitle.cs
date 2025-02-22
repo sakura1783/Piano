@@ -27,6 +27,5 @@ public class SongTitle : MonoBehaviour
     {
         manager.VideoPlayer.clip = data.video;
         manager.VideoPlayer.Play();
-        manager.ImgPlayStopButton.sprite = manager.PlaySprite;
     }
 }
