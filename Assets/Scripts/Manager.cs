@@ -33,6 +33,7 @@ public class Manager : MonoBehaviour
 
     private List<SongDataSO.SongData> playList = new();
     private int playNo;
+    private bool repeatPlayList;
 
     private bool isShuffleEventEnabled;
 
@@ -90,8 +91,16 @@ public class Manager : MonoBehaviour
             .Subscribe(_ =>
             {
                 // ループ再生の設定
-                videoPlayer.isLooping = !videoPlayer.isLooping;
-                repeatSlashGroup.alpha = videoPlayer.isLooping ? 0 : 1;
+                if (isShuffleEventEnabled)  // ランダム再生中
+                {
+                    repeatPlayList = !repeatPlayList;  // フラグの切り替えのみ
+                    repeatSlashGroup.alpha = repeatPlayList ? 0 : 1;
+                }
+                else  // ランダム再生中でない場合
+                {
+                    videoPlayer.isLooping = !videoPlayer.isLooping;  // ひたすらに一曲をループ
+                    repeatSlashGroup.alpha = videoPlayer.isLooping ? 0 : 1;
+                }
             })
             .AddTo(this);
 
@@ -110,8 +119,9 @@ public class Manager : MonoBehaviour
         
         videoPlayer.loopPointReached -= OnVideoEnd;  // 前回登録したイベントを解除
 
+        // ランダム再生でのループは、プレイリスト全体を繰り返す(ランダム再生↔︎通常再生での不具合をなくす)
+        repeatPlayList = videoPlayer.isLooping;
         videoPlayer.isLooping = false;
-        repeatSlashGroup.alpha = 1;
 
         playNo = 0;
 
@@ -152,18 +162,21 @@ public class Manager : MonoBehaviour
 
     void OnVideoEnd(VideoPlayer vp)  // loopPointReachedにVideoPlayerの情報を引数に取らないと、シグネチャが合わずエラーとなる。
     {
-        // 次の曲が存在しない場合、ランダム再生をやめる
-        if (playNo >= playList.Count) DisableShufflePlay();
+        // 次の曲が存在せず、ループしない場合はランダム再生をやめる
+        if (playNo >= playList.Count && !repeatPlayList) DisableShufflePlay();
 
         if (!isShuffleEventEnabled) return;
 
-        Debug.Log("次の曲を再生します");
+        // 次の曲が存在せず、ループさせる場合はプレイリストの最初の曲から再生し、プレイリストをループさせる
+        if (playNo >= playList.Count) playNo = 0;
 
         // 次の曲を再生
         vp.clip = playList[playNo].video;
         vp.Play();
 
         playNo++;
+
+        Debug.Log("次の曲を再生します");
     }
 
     /// <summary>
@@ -173,7 +186,8 @@ public class Manager : MonoBehaviour
     {
         isShuffleEventEnabled = false;
 
-        // ループ再生ボタンのinteractable等、シャッフル時に強制的に設定した値を元に戻す
+        // isLoopingを再設定(ランダム再生↔︎通常再生での不具合をなくす)
+        videoPlayer.isLooping = repeatPlayList;
     }
 
     /// <summary>
@@ -186,7 +200,6 @@ public class Manager : MonoBehaviour
     // }
 
 
-    /* 実装 */
+    /* TODO 実装 */
     // 次の曲を再生するボタン(ランダム再生の時、需要が結構あるかも)
-    // ループ時、プレイリストを繰り返す  // 実装に伴い、ShufflePlay()内のisLooping = falseの処理をなくす
 }

@@ -626,7 +626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4ae2c40556454859a47956560760d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  songDataSO: {fileID: 11400000, guid: b60f587b52789461695b760ee61bab05, type: 2}
+  songDataSO: {fileID: 11400000, guid: d8a50276d063246f9b2ee3dd9d692b48, type: 2}
 --- !u!1 &801071239
 GameObject:
   m_ObjectHideFlags: 0
