@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,6 +31,14 @@ public class Manager : MonoBehaviour
 
     [SerializeField] private CanvasGroup repeatSlashGroup;
 
+    private List<SongDataSO.SongData> playList = new();
+    private int playNo;
+
+    private bool isShuffleEventRegistered;
+    private bool isShuffleEventEnabled;
+
+    //private IDisposable subscription;
+
 
     void Start()
     {
@@ -39,7 +49,7 @@ public class Manager : MonoBehaviour
             .AddTo(this);
 
         // Tagオブジェクトの生成
-        foreach (Tag tag in System.Enum.GetValues(typeof(Tag)))
+        foreach (Tag tag in Enum.GetValues(typeof(Tag)))
         {
             if (tag != Tag.None)
             {
@@ -59,7 +69,7 @@ public class Manager : MonoBehaviour
 
         // 各ボタンの処理
         btnPlay_Stop.OnClickAsObservable()
-            .ThrottleFirst(System.TimeSpan.FromSeconds(0.1f))
+            .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
             .Subscribe(_ =>
             {
                 // 動画の再生・一時停止
@@ -69,7 +79,7 @@ public class Manager : MonoBehaviour
             .AddTo(this);
 
         btnReplay.OnClickAsObservable()
-            .ThrottleFirst(System.TimeSpan.FromSeconds(0.1f))
+            .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
             .Subscribe(_ =>
             {
                 // 最初から再生
@@ -79,25 +89,18 @@ public class Manager : MonoBehaviour
             .AddTo(this);
 
         btnRepeat.OnClickAsObservable()
-            .ThrottleFirst(System.TimeSpan.FromSeconds(0.1f))
+            .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
             .Subscribe(_ =>
             {
                 // ループ再生の設定
                 videoPlayer.isLooping = !videoPlayer.isLooping;
                 repeatSlashGroup.alpha = videoPlayer.isLooping ? 0 : 1;
-
-                Debug.Log("動きました①");
             })
             .AddTo(this);
 
         btnShuffle.OnClickAsObservable()
-            .ThrottleFirst(System.TimeSpan.FromSeconds(0.1f))
-            //.Subscribe(_ => ShufflePlay())
-            .Subscribe(_ =>
-            {
-                ShufflePlay();
-                Debug.Log("動きました");
-            })
+            .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
+            .Subscribe(_ => ShufflePlay())
             .AddTo(this);
     }
 
@@ -106,45 +109,90 @@ public class Manager : MonoBehaviour
     /// </summary>
     private void ShufflePlay()
     {
-        // TODO ループボタン、リプレイボタン等他のボタンの制御。一旦今のままでどうなるかも確認
+        isShuffleEventEnabled = true;
 
-        int playNo = 0;
+        videoPlayer.isLooping = false;
+        videoPlayer.loopPointReached -= OnVideoEnd;  // 前回登録したイベントを解除
+
+        playNo = 0;
 
         // 全曲をランダムに並び替えて、プレイリストを作成
-        List<SongDataSO.SongData> playList = new();
-        playList = DataBaseManager.instance.songDataSO.songDataList.OrderBy(_ => Random.value).ToList();
-        foreach (var songData in playList)
-        {
-            Debug.Log(songData.video.name);
-        }
+        playList = DataBaseManager.instance.songDataSO.songDataList.OrderBy(_ => UnityEngine.Random.value).ToList();
+        foreach (var songData in playList) Debug.Log(songData.video.name);
 
-        Observable.Merge
-            (
-                Observable.Return(false), // 最初の一回は強制的にfalseを流す
-                videoPlayer.ObserveEveryValueChanged(vp => vp.isPlaying)  // 2回目以降は、isPlayingの変化に従う
-            )
-            //.Where(value => false)  // 間違い、以下と同義ではない。この場合、すべての値が止められる(value => trueではすべての値が流れる)
-            .Where(value => !value)
-            .Subscribe(value =>
-            {
-                Debug.Log("次の曲を再生します");
+        //最初の曲だけ、曲が最後まで再生されるのを待たずに流す
+        videoPlayer.clip = playList[playNo].video;
+        videoPlayer.time = 0;  // (偶然同じ動画を上記のClipに設定したとき用)
+        videoPlayer.Play();
+        playNo++;
 
-                // 次の曲を再生
-                videoPlayer.clip = playList[playNo].video;
-                videoPlayer.Play();
+        // 動画が最後まで再生された際に駆動するイベントを登録
+        videoPlayer.loopPointReached += OnVideoEnd;  // loopPointReachedは、動画が最後まで再生された際に呼ばれる。
+        
+        // subscription = Observable.Merge
+        //     (
+        //         Observable.Return(true), // 最初の一回だけ強制的にSubscribe内の処理を動かす
+        //         //videoPlayer.ObserveEveryValueChanged(vp => vp.isPlaying) // 2回目以降は、isPlayingの変化に従う
+        //         videoPlayer.ObserveEveryValueChanged(vp => vp.time >= vp.length)  // 曲が最後まで再生されたら
+        //     )
+        //     .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
+        //     //.StartWith(true)  // MergeとObservable.Return()を使わないのであれば、こちらでも同じことが実装可能
+        //     //.Where(value => false)  // 間違い、以下と同義ではない。この場合、すべての値が止められる(value => trueではすべての値が流れる)
+        //     //.Where(value => !value)
+        //     .Subscribe(_ =>
+        //     {
+        //         Debug.Log("次の曲を再生します");
 
-                playNo++;
-            })
-            .AddTo(this);
+        //         // 次の曲を再生
+        //         videoPlayer.clip = playList[playNo].video;
+        //         videoPlayer.Play();
+
+        //         playNo++;
+        //     });
     }
+
+    void OnVideoEnd(VideoPlayer vp)  // loopPointReachedにVideoPlayerの情報を引数に取らないと、シグネチャが合わずエラーとなる。
+    {
+        // 次の曲が存在しない場合、ランダム再生をやめる
+        if (playNo >= playList.Count) DisableShufflePlay();
+
+        if (!isShuffleEventEnabled) return;
+
+        Debug.Log("次の曲を再生します");
+
+        // 次の曲を再生
+        vp.clip = playList[playNo].video;
+        vp.Play();
+
+        playNo++;
+    }
+
+    /// <summary>
+    /// ランダム再生をやめる
+    /// </summary>
+    public void DisableShufflePlay()
+    {
+        isShuffleEventEnabled = false;
+
+        // ループ再生ボタンのinteractable等、シャッフル時に強制的に設定した値を元に戻す
+    }
+
+    /// <summary>
+    /// ランダム再生でのVideoPlayer.isPlayingの購読を破棄
+    /// </summary>
+    // public void DisposeShuffleSubscription()
+    // {
+    //     if (subscription != null)  subscription.Dispose();
+    //     subscription = null;
+    // }
 
 
     /* 実装 */
-    // ランダム再生(ループどうするか。ランダム中も1曲のみループされてしまうのか確認。強制的にisLoopingをfalseにして、ボタンを押せなくする？)
-    // (次の曲・前の曲を再生するボタン)
+    // 次の曲を再生するボタン(ランダム再生の時、需要が結構あるかも)
+    // ループ時、1曲のみ繰り返される。ループ外すと、次の曲が再生される。ループ時の挙動どうするか(1曲だけ繰り返すか、プレイリストを繰り返すか)
 
     /* ランダム再生での問題点 */
-    // SongTitleを押した際、選択した曲ではなく、プレイリストの次の曲へ移行してしまう
     // 停止ボタンを押した際にもプレイリストの次の曲へ移ってしまう(現在の曲の再生・停止が行われない)
-    // プレイリスト1番目の曲が再生されない。
+
+    // 最後の曲が再生された後の処理(次の曲が存在しないのでエラーになると思う)。最後+1の曲は再生の処理を行わない、DisposeShuffleSubscription()
 }

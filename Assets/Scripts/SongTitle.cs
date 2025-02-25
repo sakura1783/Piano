@@ -25,6 +25,8 @@ public class SongTitle : MonoBehaviour
 
     private void OnClick(SongDataSO.SongData data, Manager manager)
     {
+        manager.DisableShufflePlay();
+        
         manager.VideoPlayer.clip = data.video;
         manager.VideoPlayer.Play();
     }
