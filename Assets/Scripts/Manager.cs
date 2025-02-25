@@ -34,10 +34,7 @@ public class Manager : MonoBehaviour
     private List<SongDataSO.SongData> playList = new();
     private int playNo;
 
-    private bool isShuffleEventRegistered;
     private bool isShuffleEventEnabled;
-
-    //private IDisposable subscription;
 
 
     void Start()
@@ -110,9 +107,11 @@ public class Manager : MonoBehaviour
     private void ShufflePlay()
     {
         isShuffleEventEnabled = true;
+        
+        videoPlayer.loopPointReached -= OnVideoEnd;  // 前回登録したイベントを解除
 
         videoPlayer.isLooping = false;
-        videoPlayer.loopPointReached -= OnVideoEnd;  // 前回登録したイベントを解除
+        repeatSlashGroup.alpha = 1;
 
         playNo = 0;
 
@@ -189,10 +188,5 @@ public class Manager : MonoBehaviour
 
     /* 実装 */
     // 次の曲を再生するボタン(ランダム再生の時、需要が結構あるかも)
-    // ループ時、1曲のみ繰り返される。ループ外すと、次の曲が再生される。ループ時の挙動どうするか(1曲だけ繰り返すか、プレイリストを繰り返すか)
-
-    /* ランダム再生での問題点 */
-    // 停止ボタンを押した際にもプレイリストの次の曲へ移ってしまう(現在の曲の再生・停止が行われない)
-
-    // 最後の曲が再生された後の処理(次の曲が存在しないのでエラーになると思う)。最後+1の曲は再生の処理を行わない、DisposeShuffleSubscription()
+    // ループ時、プレイリストを繰り返す  // 実装に伴い、ShufflePlay()内のisLooping = falseの処理をなくす
 }

@@ -20,7 +20,7 @@ MonoBehaviour:
     name: "\u8352\u91CE\u306E\u30D0\u30E9"
     video: {fileID: 32900000, guid: 10738ce7bd64e4ef9a79e1bb6cdf40d8, type: 3}
   - tag: 1
-    name: ??
+    name: "\u30A8\u30F3\u30BF\u30FC\u30C6\u30A4\u30CA\u30FC"
     video: {fileID: 32900000, guid: db4b1d02ac6584b98a959f9f4ee69311, type: 3}
   - tag: 2
     name: "\u4EBA\u751F\u306E\u30E1\u30EA\u30FC\u30B4\u30FC\u30E9\u30F3\u30C9"
