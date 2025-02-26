@@ -21,6 +21,7 @@ public class Manager : MonoBehaviour
     [SerializeField] private Button btnPlay_Stop;
     [SerializeField] private Button btnReplay;
     [SerializeField] private Button btnRepeat;
+    [SerializeField] private Button btnSkip;
     [SerializeField] private Button btnShuffle;
 
     [SerializeField] private Image imgPlayStopButton;
@@ -82,6 +83,34 @@ public class Manager : MonoBehaviour
             {
                 // 最初から再生
                 videoPlayer.time = 0f;
+                videoPlayer.Play();
+            })
+            .AddTo(this);
+
+        btnSkip.OnClickAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
+            .Subscribe(_ =>
+            {
+                VideoClip nextVideo;
+                bool isLastSong = false;
+
+                // 次の曲へ移行(最後の曲であれば最初の曲に戻る)
+                if (isShuffleEventEnabled)
+                {
+                    if (playNo >= playList.Count) isLastSong = true;
+
+                    nextVideo = isLastSong ? playList[0].video : playList[playNo].video;
+                    playNo = isLastSong ? 1 : playNo + 1;  // playNo++ ←ダメ。x++「現在の値を使ってから増やす」、++x「先に増やしてから、その値を使う」。今回の処理はplayNo+1または++playNoを使う。(代入処理においては、後置インクリメントは意図しない挙動になる場合がある)
+                }
+                else
+                {
+                    if (videoPlayer.clip == DataBaseManager.instance.songDataSO.songDataList.Last().video) isLastSong = true;
+
+                    List<SongDataSO.SongData> songDatas = DataBaseManager.instance.songDataSO.songDataList;
+                    nextVideo = isLastSong ? songDatas[0].video : songDatas[songDatas.FindIndex(data => data.video == videoPlayer.clip) + 1].video;
+                }
+
+                videoPlayer.clip = nextVideo;
                 videoPlayer.Play();
             })
             .AddTo(this);

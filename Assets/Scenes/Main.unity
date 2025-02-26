@@ -610,6 +610,7 @@ MonoBehaviour:
   btnPlay_Stop: {fileID: 1994955879}
   btnReplay: {fileID: 996685835}
   btnRepeat: {fileID: 1589141008}
+  btnSkip: {fileID: 2082509313}
   btnShuffle: {fileID: 801071241}
   imgPlayStopButton: {fileID: 1994955877}
   playSprite: {fileID: -913131460, guid: df1a1f338020d4a4b9ab78cddac35df3, type: 3}
@@ -627,7 +628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4ae2c40556454859a47956560760d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  songDataSO: {fileID: 11400000, guid: d8a50276d063246f9b2ee3dd9d692b48, type: 2}
+  songDataSO: {fileID: 11400000, guid: b60f587b52789461695b760ee61bab05, type: 2}
 --- !u!1 &801071239
 GameObject:
   m_ObjectHideFlags: 0
