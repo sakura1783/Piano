@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -156,7 +155,7 @@ public class Manager : MonoBehaviour
 
         // 全曲をランダムに並び替えて、プレイリストを作成
         playList = DataBaseManager.instance.songDataSO.songDataList.OrderBy(_ => UnityEngine.Random.value).ToList();
-        foreach (var songData in playList) Debug.Log(songData.video.name);
+        foreach (var songData in playList) Debug.Log(songData.video.name);  // TODO 消す
 
         //最初の曲だけ、曲が最後まで再生されるのを待たずに流す
         videoPlayer.clip = playList[playNo].video;
@@ -204,8 +203,6 @@ public class Manager : MonoBehaviour
         vp.Play();
 
         playNo++;
-
-        Debug.Log("次の曲を再生します");
     }
 
     /// <summary>

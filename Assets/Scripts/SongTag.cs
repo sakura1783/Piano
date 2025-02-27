@@ -45,16 +45,19 @@ public class SongTag : MonoBehaviour
             // 自身が親の何番目の子か調べる
             var index = transform.GetSiblingIndex();
 
+            int count = 1;
             // 自身と同じタグを持つ曲を下に生成・追加
             DataBaseManager.instance.songDataSO.songDataList
                 .Where(data => data.tag == songTag).ToList()
                 .ForEach(data =>
                 {
                     var titleObj = Instantiate(titlePrefab, manager.SongsTran);
-                    titleObj.transform.SetSiblingIndex(index + 1);
+                    titleObj.transform.SetSiblingIndex(index + count);
                     titleObj.Setup(data, manager);
 
                     generatedObjs.Add(titleObj);
+
+                    count++;
                 });
 
             isDropdownOpened = true;
