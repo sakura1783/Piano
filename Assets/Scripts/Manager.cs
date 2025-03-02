@@ -40,6 +40,9 @@ public class Manager : MonoBehaviour
 
     void Start()
     {
+        // スリープ防止
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         // 再生・停止ボタンの画像の制御
         videoPlayer
             .ObserveEveryValueChanged(vp => vp.isPlaying)
@@ -246,7 +249,7 @@ public class Manager : MonoBehaviour
 
 
     /* TODO 実装 */
-    // 画面落ちないように
+    // 自動スリープさせない
     // バックグラウンド再生
     // 再生バー(?)、任意の位置から再生できるバー
 }
