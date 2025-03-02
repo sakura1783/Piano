@@ -65,6 +65,8 @@ public class Manager : MonoBehaviour
                 titleObj.Setup(data, this);
             });
 
+        videoPlayer.loopPointReached += OnVideoEnd;  // 通常再生時のイベントを登録
+
         // 各ボタンの処理
         btnPlay_Stop.OnClickAsObservable()
             .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
@@ -144,8 +146,7 @@ public class Manager : MonoBehaviour
     private void ShufflePlay()
     {
         isShuffleEventEnabled = true;
-        
-        videoPlayer.loopPointReached -= OnVideoEnd;  // 前回登録したイベントを解除
+        videoPlayer.loopPointReached -= OnVideoEnd;  // 通常再生時のイベントを削除
 
         // ランダム再生でのループは、プレイリスト全体を繰り返す(ランダム再生↔︎通常再生での不具合をなくす)
         repeatPlayList = videoPlayer.isLooping;
@@ -188,21 +189,36 @@ public class Manager : MonoBehaviour
         //     });
     }
 
+    /// <summary>
+    /// 動画が最後まで再生された際に動く処理
+    /// isShuffleEventEnabledによって処理を分岐させる
+    /// </summary>
+    /// <param name="vp"></param>
     void OnVideoEnd(VideoPlayer vp)  // loopPointReachedにVideoPlayerの情報を引数に取らないと、シグネチャが合わずエラーとなる。
     {
-        // 次の曲が存在せず、ループしない場合はランダム再生をやめる
-        if (playNo >= playList.Count && !repeatPlayList) DisableShufflePlay();
+        if (isShuffleEventEnabled)
+        {
+            // 次の曲が存在せず、ループしない場合はランダム再生をやめる
+            if (playNo >= playList.Count && !repeatPlayList) DisableShufflePlay();
 
-        if (!isShuffleEventEnabled) return;
+            // 次の曲が存在せず、ループさせる場合はプレイリストの最初の曲から再生し、プレイリストをループさせる
+            if (playNo >= playList.Count) playNo = 0;
 
-        // 次の曲が存在せず、ループさせる場合はプレイリストの最初の曲から再生し、プレイリストをループさせる
-        if (playNo >= playList.Count) playNo = 0;
+            // 次の曲を再生
+            vp.clip = playList[playNo].video;
+            vp.Play();
 
-        // 次の曲を再生
-        vp.clip = playList[playNo].video;
-        vp.Play();
+            playNo++;
+        }
+        // 通常再生時
+        else
+        {
+            var songDatas = DataBaseManager.instance.songDataSO.songDataList;
+            var playVideo = videoPlayer.clip == songDatas.Last().video ? songDatas[0].video : songDatas[songDatas.FindIndex(data => data.video == videoPlayer.clip) + 1].video;
 
-        playNo++;
+            vp.clip = playVideo;
+            vp.Play();
+        }
     }
 
     /// <summary>
@@ -211,6 +227,9 @@ public class Manager : MonoBehaviour
     public void DisableShufflePlay()
     {
         isShuffleEventEnabled = false;
+
+        videoPlayer.loopPointReached -= OnVideoEnd;  // ランダム再生時のイベントを解除
+        videoPlayer.loopPointReached += OnVideoEnd;  // 通常再生時のイベントを登録
 
         // isLoopingを再設定(ランダム再生↔︎通常再生での不具合をなくす)
         videoPlayer.isLooping = repeatPlayList;
@@ -227,5 +246,7 @@ public class Manager : MonoBehaviour
 
 
     /* TODO 実装 */
-    // 次の曲を再生するボタン(ランダム再生の時、需要が結構あるかも)
+    // 画面落ちないように
+    // バックグラウンド再生
+    // 再生バー(?)、任意の位置から再生できるバー
 }
