@@ -17,11 +17,12 @@ namespace iOSNative
             __enableBackgroundAudio();
         }
 
+        // TODO iOSビルドの際はコメントアウトを削除
         // NOTE: 自動有効化が不要なら切ること
-        [RuntimeInitializeOnLoadMethod]
-        static void AutoEnabling()
-        {
-            EnableBackgroundAudio();
-        }
+        // [RuntimeInitializeOnLoadMethod]
+        // static void AutoEnabling()
+        // {
+        //     EnableBackgroundAudio();
+        // }
     }
 }

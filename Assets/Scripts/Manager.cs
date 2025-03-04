@@ -43,7 +43,7 @@ public class Manager : MonoBehaviour
         // スリープ防止
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        // バックグラウンド再生
+        // バックグラウンド再生　(// TODO iOSはEnableBackgroundAudio、EnableBackgroundAudioBridge、XcodePreProcessを追加したができなかった。裏でも再生自体は行われているが、音が出ない)
         if (Application.platform == RuntimePlatform.Android)
         {
             AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
@@ -56,10 +56,6 @@ public class Manager : MonoBehaviour
                 activity.Dispose();
                 Debug.Log("購読を破棄しました");
             } 
-        }
-        else if (Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-
         }
 
         // 再生・停止ボタンの画像の制御
@@ -268,6 +264,5 @@ public class Manager : MonoBehaviour
 
 
     /* TODO 実装 */
-    // バックグラウンド再生
     // 再生バー(?)、任意の位置から再生できるバー
 }
